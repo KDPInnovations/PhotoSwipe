@@ -1,4 +1,4 @@
-/*! PhotoSwipe Default UI - 4.1.3 - 2019-01-08
+/*! PhotoSwipe Default UI - 4.1.3 - 2019-02-04
 * http://photoswipe.com
 * Copyright (c) 2019 Dmitry Semenov; */
 /**
@@ -94,7 +94,8 @@ var PhotoSwipeUI_Default =
 			},
 				
 			indexIndicatorSep: ' / ',
-			fitControlsWidth: 1200
+			fitControlsWidth: 1200,
+			useCordovaSocialShare: false
 
 		},
 		_blockControlsTap,
@@ -171,6 +172,31 @@ var PhotoSwipeUI_Default =
 		},
 		_toggleShareModal = function() {
 
+			if (_options.useCordovaSocialShare){
+				var imgUrl=_options.getImageURLForShare();
+				
+				if (imgUrl){
+            		var options = {
+                			  files: [imgUrl],
+                			  
+                			  chooserTitle: 'Share Your Photo' // Android only, you can override the default share sheet title,
+                			  
+                			};
+
+                			var onSuccess = function(result) {
+                			  console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+                			  console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+                			};
+
+                			var onError = function(msg) {
+                			  console.log("Sharing failed with message: " + msg);
+                			};
+
+                			window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+				}
+				return false;
+			}
+			
 			_shareModalHidden = !_shareModalHidden;
 			
 			
